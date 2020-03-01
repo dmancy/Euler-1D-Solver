@@ -50,3 +50,24 @@ class Riemann:
             """Compute the state at a given sampling point x/t"""
             return Solution(self, sampling_point)
 
+    def plot_time(self, X, x0, t):
+            """Plot the repartition of density, velocity and pressure at a given time t, on a mesh X, where the origin of the discontinuity is in x0. Save raw data in a file."""
+
+            Pressure = [Solution(self, (x-x0)/t).pressure for x in X]
+            Velocity = [Solution(self, (x-x0)/t).velocity for x in X]
+            Density = [Solution(self, (x-x0)/t).rho for x in X]
+
+            fig, axs = plt.subplots(3, sharex=True)
+            fig.suptitle("Solution of the Riemann problem\nat t = {}s".format(t))
+            axs[0].plot(X, Density)
+            axs[1].plot(X, Velocity)
+            axs[2].plot(X, Pressure)
+
+            axs[0].grid()
+            axs[0].set(ylabel = "Density")
+            axs[1].grid()
+            axs[1].set(ylabel = "Velocity")
+            axs[2].grid()
+            axs[2].set(ylabel = "Pressure")
+
+            plt.xlabel("Location x")

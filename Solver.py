@@ -4,28 +4,54 @@ from General_Riemann import General_Riemann_Problem
 from Flux import Flux
 
 
-def Solver(U_init, grid, Courant_Number, t0 t_final):
+def Solver(U_init, grid, Courant_Number, t0, t_final):
 
-    U = np.copy(U_init)
+    U = U_init.copy()
+    U_new = U.copy()
 
-    for i_cell in range(len(grid.cell_position)):
-        face1 = grid.faces[i_cell]
-        face2 = grid.faces[i_cell+1]
 
-        delta_x = face2 - face1
+    t = t0
 
-        delta_t = Courant_Number * delta_x / (abs(U[i].velocity) + U[i].c)
+    #Uniform Grid
+    delta_x = grid.cell_length[0]
 
-        #Resolution of the Riemann Problems
+    while t <= t_final:
+        #Find max(|U| + c)
+        max_eigen = 0
+        for i_cell in range(len(grid.cell_position)):
+            if max_eigen < abs(U[i_cell].velocity) + U[i_cell].c:
+                umax = abs(U[i_cell].velocity) + U[i_cell].c
 
-        W_face_1 = General_Riemann_Problem(U[i-1], U[i])
-        W_face_2 = General_Riemann_Problem(U[i], U[i+1])
+        delta_t = Courant_Number * delta_x / umax
 
-        Flux1 = Flux(W_face_1)
-        Flux2 = Flux(W_face_2)
+        for i_cell in range(len(grid.cell_position)):
+            face1 = grid.faces[i_cell]
+            face2 = grid.faces[i_cell+1]
 
-        #Update values in U
-        #Create a method in State to update temperature and c
+            #Resolution of the Riemann Problems
+
+            W_face_1 = General_Riemann_Problem(U[i_cell-1], U[i_cell], 0)
+            W_face_2 = General_Riemann_Problem(U[i_cell], U[(i_cell+1)%len(grid.cell_position)], 0)
+
+            Flux1 = Flux(W_face_1)
+            Flux2 = Flux(W_face_2)
+
+            U_new[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
+
+        U = U_new.copy()
+
+        if (t == t_final):
+            break
+
+        t += delta_t
+
+        if ( t > t_final):
+            delta_t -= t + delta_t - t_final
+
+        return U
+       
+
+
 
 
 

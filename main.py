@@ -4,6 +4,8 @@ import numpy as np
 
 from Grid import Grid
 from State import State
+from Solver import Solver
+from Riemann import Riemann
 
 
 #Number of cells
@@ -32,8 +34,21 @@ pressure = [U_initial[i].pressure for i in range(N_cells)]
 #plt.plot(grid.cell_position, pressure)
 #plt.show()
 
+t0 = 0
+t_final = 25
 
 
+#Exact solution
+Riemann_problem = Riemann(1., 0., 2., 1., 0., 1., 1.4)
+Riemann_problem.plot_time(grid.cell_position, 0,  t_final)
 
 Courant_number = .6
 
+U_final = Solver(U_initial, grid, Courant_number, t0, t_final)
+
+
+pressure = [U_final[i].velocity for i in range(N_cells)]
+
+plt.figure()
+plt.plot(grid.cell_position, pressure)
+plt.show()
