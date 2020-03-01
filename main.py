@@ -31,6 +31,14 @@ U_initial = [State("Left", gamma, 1, 0, 2) if grid.cell_position[i] <= 0 else St
 
 pressure = [U_initial[i].pressure for i in range(N_cells)]
 
+#plt.figure()
+#plt.plot(grid.cell_position, pressure)
+#plt.show()
+
+U2 = U_initial.copy()
+
+pressure = [U2[i].pressure for i in range(N_cells)]
+
 #plt.plot(grid.cell_position, pressure)
 #plt.show()
 
@@ -42,13 +50,12 @@ t_final = 25
 Riemann_problem = Riemann(1., 0., 2., 1., 0., 1., 1.4)
 Riemann_problem.plot_time(grid.cell_position, 0,  t_final)
 
-Courant_number = .6
+Courant_number = .1
 
 U_final = Solver(U_initial, grid, Courant_number, t0, t_final)
 
 
-pressure = [U_final[i].velocity for i in range(N_cells)]
-
+pressure = [U_final[i].rho for i in range(N_cells)]
 plt.figure()
-plt.plot(grid.cell_position, pressure)
+plt.plot(grid.cell_position, pressure, "+")
 plt.show()
