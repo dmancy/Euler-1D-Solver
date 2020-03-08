@@ -17,7 +17,7 @@ class Euler:
 
         self.U_final = None
 
-        self.Solver_Zha_Bilgen()
+        self.Solver_Steger_Warming()
 
 
     def Solver_Godunov(self):
@@ -74,12 +74,12 @@ class Euler:
     def Solver_Steger_Warming(self):
 
         U = self.U_init.copy()
-        U_new = U.copy()
 
         t = self.t0
 
         delta_x = min(self.grid.cell_length)
 
+        F_faces = [0] * len(self.grid.faces)
 
         while t <= self.t_final:
             #Find max(|U| + c)
@@ -92,21 +92,26 @@ class Euler:
 
             delta_t = self.Courant_Number * delta_x / umax
 
-            for i_cell in range(len(self.grid.cell_position)):
+            #Comute the fluxes at the interfaces
+            for i_face in range(len(self.grid.faces)):
+                if i_face == 0:
+                    Flux = Flux_Steger_Warming(U[i_face],U[i_face])
+                elif i_face == len(self.grid.faces)-1:
+                    Flux = Flux_Steger_Warming(U[i_face-1],U[i_face-1])
 
-                if (0 < i_cell < len(self.grid.cell_position)-1):
-                    Flux1 = Flux_Steger_Warming(U[i_cell-1],U[i_cell]) 
-                    Flux2 = Flux_Steger_Warming(U[i_cell],U[i_cell+1]) 
-                elif (i_cell == 0):
-                    Flux1 = Flux_Steger_Warming(U[i_cell],U[i_cell]) 
-                    Flux2 = Flux_Steger_Warming(U[i_cell],U[i_cell+1]) 
                 else:
-                    Flux1 = Flux_Steger_Warming(U[i_cell-1],U[i_cell]) 
-                    Flux2 = Flux_Steger_Warming(U[i_cell],U[i_cell]) 
+                    Flux = Flux_Steger_Warming(U[i_face-1], U[i_face])
 
-                U_new[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
+                F_faces[i_face] = Flux
 
-            U = U_new.copy()
+
+            #Update the state at each cell
+            for i_cell in range(len(self.grid.cell_position)):
+                Flux1 = F_faces[i_cell]
+                Flux2 = F_faces[i_cell+1]
+
+                U[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
+
 
             if (t == self.t_final):
                 break
