@@ -52,7 +52,7 @@ t_final = 25
 Riemann_problem = Riemann(1., 0., 2., 1., 0., 1., 1.4)
 #Riemann_problem.plot_time(grid.cell_position, 0,  t_final)
 
-Courant_number = .1
+Courant_number = .5
 
 Euler = Euler(U_initial, grid, Courant_number, t0, t_final)
 #pressure = [Euler.U_final[i].rho for i in range(N_cells)]
