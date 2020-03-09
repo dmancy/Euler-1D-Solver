@@ -5,6 +5,7 @@ from Flux import Flux
 from Flux_Splitting import Flux_Steger_Warming
 from Flux_Van_Leer import Flux_Van_Leer
 from Flux_Zha_Bilgen import Flux_Zha_Bilgen
+from Flux_Roe import Flux_Roe
 import Flux_Richtmeyer
 
 class Euler:
@@ -18,7 +19,7 @@ class Euler:
 
         self.U_final = None
 
-        self.Solver_Richtmeyer()
+        self.Solver_Roe()
 
 
     def Solver_Godunov(self):
@@ -236,7 +237,6 @@ class Euler:
         delta_x = min(self.grid.cell_length)
 
         F_faces = [0] * len(self.grid.faces)
-        Predictor_faces = [0] * len(self.grid.faces)
 
         while t <= self.t_final:
             #Find max(|U| + c)
@@ -259,6 +259,56 @@ class Euler:
                     F_faces[i_face] = Flux(Flux_Richtmeyer.Predictor(U[i_face-1], U[i_face-1], delta_t, delta_x))
 
 
+
+            #Update the state at each cell
+            for i_cell in range(len(self.grid.cell_position)):
+                Flux1 = F_faces[i_cell]
+                Flux2 = F_faces[i_cell+1]
+
+                U[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
+
+            if (t == self.t_final):
+                break
+
+            t += delta_t
+
+            if ( t > self.t_final):
+                delta_t -= t + delta_t - self.t_final
+
+            self.U_final = U
+
+    def Solver_Roe(self):
+
+        U = self.U_init.copy()
+
+        t = self.t0
+
+        delta_x = min(self.grid.cell_length)
+
+        F_faces = [0] * len(self.grid.faces)
+
+        while t <= self.t_final:
+            #Find max(|U| + c)
+            max_eigen = 0
+            for i_cell in range(len(self.grid.cell_position)):
+                if max_eigen < abs(U[i_cell].velocity) + U[i_cell].c:
+                    umax = abs(U[i_cell].velocity) + U[i_cell].c
+
+
+
+            delta_t = self.Courant_Number * delta_x / umax
+
+            #Compute the fluxes at the interfaces
+            for i_face in range(len(self.grid.faces)):
+                if i_face == 0:
+                    Flux = Flux_Roe(U[i_face],U[i_face])
+                elif i_face == len(self.grid.faces)-1:
+                    Flux = Flux_Roe(U[i_face-1],U[i_face-1])
+
+                else:
+                    Flux = Flux_Roe(U[i_face-1], U[i_face])
+
+                F_faces[i_face] = Flux
 
             #Update the state at each cell
             for i_cell in range(len(self.grid.cell_position)):
