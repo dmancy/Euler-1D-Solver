@@ -19,7 +19,7 @@ class Euler:
 
         self.U_final = None
 
-        self.Solver_Roe()
+        self.Solver_Van_Leer()
 
 
     def Solver_Godunov(self):

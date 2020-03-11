@@ -4,7 +4,7 @@ def Flux_Splitting_Computation(W, lambda1, lambda2, lambda3):
 
         f1 = (W.gamma - 1)/ W.gamma * W.rho * lambda1 + W.rho/(2*W.gamma) * lambda2 + W.rho/(2*W.gamma) * lambda3
         f2 = (W.gamma - 1)/ W.gamma * W.rho * lambda1 * W.velocity + W.rho/(2*W.gamma) * lambda2 * (W.velocity + W.c) + W.rho/(2*W.gamma) * lambda3 * (W.velocity - W.c)
-        f3 = (W.gamma - 1)/ W.gamma * W.rho * lambda1 * W.velocity**2/2 + W.rho/(2*W.gamma) * lambda2 * (W.velocity**2/2 + W.gamma/(W.gamma-1) * W.pressure/W.rho + W.velocity * W.c) + W.rho/(2*W.gamma) * lambda3 * (W.velocity**2/2 + W.gamma/(W.gamma-1) * W.pressure/W.rho + W.velocity * W.c)
+        f3 = (W.gamma - 1)/ W.gamma * W.rho * lambda1 * W.velocity**2/2 + W.rho/(2*W.gamma) * lambda2 * (W.velocity**2/2 + W.c**2/(W.gamma-1) + W.velocity * W.c) + W.rho/(2*W.gamma) * lambda3 * (W.velocity**2/2 + W.c**2/(W.gamma-1) - W.velocity * W.c)
 
         return f1, f2, f3
 
