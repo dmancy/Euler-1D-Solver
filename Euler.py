@@ -19,7 +19,7 @@ class Euler:
 
         self.U_final = None
 
-        self.Solver_Van_Leer()
+        self.Solver_Richtmeyer()
 
 
     def Solver_Godunov(self):
@@ -32,7 +32,8 @@ class Euler:
 
         W_faces = [0] * len(self.grid.faces)
 
-        while t <= self.t_final:
+        while t < self.t_final:
+
             #Find max(|U| + c)
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
@@ -49,6 +50,10 @@ class Euler:
 
             delta_t = self.Courant_Number * delta_x / umax
 
+            t += delta_t
+            if ( t > self.t_final):
+                delta_t -= t  - self.t_final
+
             for i_cell in range(len(self.grid.cell_position)):
 
                 W_face_1 = W_faces[i_cell]
@@ -60,13 +65,6 @@ class Euler:
                 U[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
 
 
-            if (t == self.t_final):
-                break
-
-            t += delta_t
-
-            if ( t > self.t_final):
-                delta_t -= t + delta_t - self.t_final
 
             self.U_final = U
 
@@ -81,7 +79,8 @@ class Euler:
 
         F_faces = [0] * len(self.grid.faces)
 
-        while t <= self.t_final:
+        while t < self.t_final:
+
             #Find max(|U| + c)
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
@@ -91,6 +90,10 @@ class Euler:
 
 
             delta_t = self.Courant_Number * delta_x / umax
+
+            t += delta_t
+            if ( t > self.t_final):
+                delta_t -= t  - self.t_final
 
             #Compute the fluxes at the interfaces
             for i_face in range(len(self.grid.faces)):
@@ -113,14 +116,6 @@ class Euler:
                 U[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
 
 
-            if (t == self.t_final):
-                break
-
-            t += delta_t
-
-            if ( t > self.t_final):
-                delta_t -= t + delta_t - self.t_final
-
             self.U_final = U
 
 
@@ -136,7 +131,8 @@ class Euler:
         F_faces = [0] * len(self.grid.faces)
 
 
-        while t <= self.t_final:
+        while t < self.t_final:
+
             #Find max(|U| + c)
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
@@ -146,6 +142,10 @@ class Euler:
 
 
             delta_t = self.Courant_Number * delta_x / umax
+
+            t += delta_t
+            if ( t > self.t_final):
+                delta_t -= t  - self.t_final
 
             #Compute the fluxes at the interfaces
             for i_face in range(len(self.grid.faces)):
@@ -166,14 +166,6 @@ class Euler:
 
                 U[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
 
-            if (t == self.t_final):
-                break
-
-            t += delta_t
-
-            if ( t > self.t_final):
-                delta_t -= t + delta_t - self.t_final
-
             self.U_final = U
 
 
@@ -187,7 +179,8 @@ class Euler:
 
         F_faces = [0] * len(self.grid.faces)
 
-        while t <= self.t_final:
+        while t < self.t_final:
+
             #Find max(|U| + c)
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
@@ -197,6 +190,10 @@ class Euler:
 
 
             delta_t = self.Courant_Number * delta_x / umax
+
+            t += delta_t
+            if ( t > self.t_final):
+                delta_t -= t  - self.t_final
 
             #Compute the fluxes at the interfaces
             for i_face in range(len(self.grid.faces)):
@@ -217,14 +214,6 @@ class Euler:
 
                 U[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
 
-            if (t == self.t_final):
-                break
-
-            t += delta_t
-
-            if ( t > self.t_final):
-                delta_t -= t + delta_t - self.t_final
-
             self.U_final = U
 
 
@@ -238,7 +227,8 @@ class Euler:
 
         F_faces = [0] * len(self.grid.faces)
 
-        while t <= self.t_final:
+        while t < self.t_final:
+
             #Find max(|U| + c)
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
@@ -248,6 +238,10 @@ class Euler:
 
 
             delta_t = self.Courant_Number * delta_x / umax
+
+            t += delta_t
+            if ( t > self.t_final):
+                delta_t -= t  - self.t_final
 
             #Compute the Fluxes
             for i_face in range(len(self.grid.faces)):
@@ -267,13 +261,6 @@ class Euler:
 
                 U[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
 
-            if (t == self.t_final):
-                break
-
-            t += delta_t
-
-            if ( t > self.t_final):
-                delta_t -= t + delta_t - self.t_final
 
             self.U_final = U
 
@@ -287,7 +274,8 @@ class Euler:
 
         F_faces = [0] * len(self.grid.faces)
 
-        while t <= self.t_final:
+        while t < self.t_final:
+
             #Find max(|U| + c)
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
@@ -297,6 +285,10 @@ class Euler:
 
 
             delta_t = self.Courant_Number * delta_x / umax
+
+            t += delta_t
+            if ( t > self.t_final):
+                delta_t -= t  - self.t_final
 
             #Compute the fluxes at the interfaces
             for i_face in range(len(self.grid.faces)):
@@ -317,12 +309,5 @@ class Euler:
 
                 U[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
 
-            if (t == self.t_final):
-                break
-
-            t += delta_t
-
-            if ( t > self.t_final):
-                delta_t -= t + delta_t - self.t_final
 
             self.U_final = U
