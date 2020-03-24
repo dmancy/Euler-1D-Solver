@@ -1,6 +1,7 @@
 #Python libraries
 import matplotlib.pyplot as plt
 import numpy as np
+import tikzplotlib
 
 from Grid import Grid
 from State import State
@@ -27,23 +28,13 @@ faces = np.arange(-N_cells//2, N_cells//2+1, delta_x)
 grid = Grid(faces)
 
 
+#Specific heat ratio
 gamma = 1.4
 
+#Initial condition
 U_initial = [State("Left", gamma, 1, 0, 2) if grid.cell_position[i] <= 0 else State("Right", gamma, 1, 0, 1) for i in range(N_cells)]
 
-pressure = [U_initial[i].pressure for i in range(N_cells)]
-
-#plt.figure()
-#plt.plot(grid.cell_position, pressure)
-#plt.show()
-
-U2 = U_initial.copy()
-
-pressure = [U2[i].pressure for i in range(N_cells)]
-
-#plt.plot(grid.cell_position, pressure)
-#plt.show()
-
+#Time parameters
 t0 = 0
 t_final = 25
 
@@ -52,11 +43,12 @@ t_final = 25
 Riemann_problem = Riemann(1., 0., 2., 1., 0., 1., 1.4)
 #Riemann_problem.plot_time(grid.cell_position, 0,  t_final)
 
-Courant_number = .5
+Courant_number = 1.
 
 Euler = Euler(U_initial, grid, Courant_number, t0, t_final)
 
-plot(Riemann_problem, Euler, grid, t_final)
-
+plot(Riemann_problem, Euler, grid, t_final, Courant_number)
 
 plt.show()
+
+#plt.savefig("Godunov.pdf")

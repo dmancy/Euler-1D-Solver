@@ -19,7 +19,7 @@ class Euler:
 
         self.U_final = None
 
-        self.Solver_Richtmeyer()
+        self.Solver_Roe()
 
 
     def Solver_Godunov(self):
@@ -31,6 +31,7 @@ class Euler:
         delta_x = min(self.grid.cell_length)
 
         W_faces = [0] * len(self.grid.faces)
+        Fluxes  = [0] * len(self.grid.faces)
 
         while t < self.t_final:
 
@@ -38,33 +39,35 @@ class Euler:
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
                 if max_eigen < abs(U[i_cell].velocity) + U[i_cell].c:
-                    umax = abs(U[i_cell].velocity) + U[i_cell].c
+                    max_eigen = abs(U[i_cell].velocity) + U[i_cell].c
 
-                #Resolution of the Riemann Problems
-                if (i_cell != 0):
-                    W_faces[i_cell] = General_Riemann_Problem(U[i_cell-1], U[i_cell], 0)
-                else:
-                    W_faces[i_cell] = U[i_cell]
-
-                W_faces[-1] = U[-1]
-
-            delta_t = self.Courant_Number * delta_x / umax
+            #Determine time step
+            delta_t = self.Courant_Number * delta_x / max_eigen
 
             t += delta_t
             if ( t > self.t_final):
-                delta_t -= t  - self.t_final
+                delta_t -= t - self.t_final
+
+
+            #Determination of flow conditons on faces
+            for i_face in range(1, len(self.grid.faces)-1):
+                #Resolution of the Riemann Problems
+                W_faces[i_face] = General_Riemann_Problem(U[i_face-1], U[i_face], 0)
+
+            W_faces[0] = U[0]
+            W_faces[-1] = U[-1]
+
+            #Computation of the Flux
+            for i_face in range(len(self.grid.faces)):
+                Fluxes[i_face] = Flux(W_faces[i_face])
+
 
             for i_cell in range(len(self.grid.cell_position)):
 
-                W_face_1 = W_faces[i_cell]
-                W_face_2 = W_faces[i_cell + 1]
-                
-                Flux1 = Flux(W_face_1)
-                Flux2 = Flux(W_face_2)
+                Flux1 = Fluxes[i_cell]
+                Flux2 = Fluxes[i_cell+1]
 
                 U[i_cell].solver_step(delta_t, delta_x, Flux1, Flux2)
-
-
 
             self.U_final = U
 
@@ -85,27 +88,24 @@ class Euler:
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
                 if max_eigen < abs(U[i_cell].velocity) + U[i_cell].c:
-                    umax = abs(U[i_cell].velocity) + U[i_cell].c
+                    max_eigen = abs(U[i_cell].velocity) + U[i_cell].c
 
 
-
-            delta_t = self.Courant_Number * delta_x / umax
+            #Determine time step
+            delta_t = self.Courant_Number * delta_x / max_eigen
 
             t += delta_t
             if ( t > self.t_final):
                 delta_t -= t  - self.t_final
 
             #Compute the fluxes at the interfaces
-            for i_face in range(len(self.grid.faces)):
-                if i_face == 0:
-                    Flux = Flux_Steger_Warming(U[i_face],U[i_face])
-                elif i_face == len(self.grid.faces)-1:
-                    Flux = Flux_Steger_Warming(U[i_face-1],U[i_face-1])
+            for i_face in range(1,len(self.grid.faces)-1):
 
-                else:
-                    Flux = Flux_Steger_Warming(U[i_face-1], U[i_face])
-
+                Flux = Flux_Steger_Warming(U[i_face-1], U[i_face])
                 F_faces[i_face] = Flux
+
+            F_faces[0] = Flux_Steger_Warming(U[0],U[0])
+            F_faces[len(self.grid.faces)-1] = Flux_Steger_Warming(U[-1],U[-1])
 
 
             #Update the state at each cell
@@ -137,11 +137,11 @@ class Euler:
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
                 if max_eigen < abs(U[i_cell].velocity) + U[i_cell].c:
-                    umax = abs(U[i_cell].velocity) + U[i_cell].c
+                    max_eigen = abs(U[i_cell].velocity) + U[i_cell].c
 
 
 
-            delta_t = self.Courant_Number * delta_x / umax
+            delta_t = self.Courant_Number * delta_x / max_eigen
 
             t += delta_t
             if ( t > self.t_final):
@@ -185,11 +185,11 @@ class Euler:
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
                 if max_eigen < abs(U[i_cell].velocity) + U[i_cell].c:
-                    umax = abs(U[i_cell].velocity) + U[i_cell].c
+                    max_eigen = abs(U[i_cell].velocity) + U[i_cell].c
 
 
 
-            delta_t = self.Courant_Number * delta_x / umax
+            delta_t = self.Courant_Number * delta_x / max_eigen
 
             t += delta_t
             if ( t > self.t_final):
@@ -233,11 +233,11 @@ class Euler:
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
                 if max_eigen < abs(U[i_cell].velocity) + U[i_cell].c:
-                    umax = abs(U[i_cell].velocity) + U[i_cell].c
+                    max_eigen = abs(U[i_cell].velocity) + U[i_cell].c
 
 
 
-            delta_t = self.Courant_Number * delta_x / umax
+            delta_t = self.Courant_Number * delta_x / max_eigen
 
             t += delta_t
             if ( t > self.t_final):
@@ -280,11 +280,11 @@ class Euler:
             max_eigen = 0
             for i_cell in range(len(self.grid.cell_position)):
                 if max_eigen < abs(U[i_cell].velocity) + U[i_cell].c:
-                    umax = abs(U[i_cell].velocity) + U[i_cell].c
+                    max_eigen = abs(U[i_cell].velocity) + U[i_cell].c
 
 
 
-            delta_t = self.Courant_Number * delta_x / umax
+            delta_t = self.Courant_Number * delta_x / max_eigen
 
             t += delta_t
             if ( t > self.t_final):

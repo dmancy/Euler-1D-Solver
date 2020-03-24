@@ -19,12 +19,12 @@ class State:
         self.velocity = velocity
         self.pressure = pressure
         self.T = self.pressure/(self.R * self.rho)
-        self.c = math.sqrt(self.gamma * self.R * self.T)
+        self.c = math.sqrt(self.gamma * self.pressure/self.rho)
 
         #Conservative variables
         self.u1 = self.rho
         self.u2 = self.rho * self.velocity
-        self.u3 = self.pressure/(self.gamma - 1) + self.rho * self.velocity**2/2
+        self.u3 = self.pressure/(self.gamma - 1) + 0.5 * self.rho * self.velocity**2
 
     def print(self):
         """Print density, velocity, pressure, temperature and sound speed in this region"""

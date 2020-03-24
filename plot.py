@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def plot(Riemann, Solver_solution, grid, t):
+def plot(Riemann, Solver_solution, grid, t, CFL):
 
     #Riemann problem solution
     Pressure = [Riemann.eval_sampling_point(x/t).pressure for x in grid.cell_position]
@@ -12,8 +12,8 @@ def plot(Riemann, Solver_solution, grid, t):
     Solver_velocity = [Solver_solution.U_final[i].velocity for i in range(len(grid.cell_position))]
     Solver_pressure = [Solver_solution.U_final[i].pressure for i in range(len(grid.cell_position))]
 
-    fig, axs = plt.subplots(3, sharex=True)
-    fig.suptitle("Solution of the Riemann problem\nat t = {}s".format(t))
+    fig, axs = plt.subplots(3, sharex=True, figsize=(8,8))
+    fig.suptitle("Solution of the problem\nat t = {}s with CFL = {}".format(t, CFL))
     axs[0].plot(grid.cell_position, Density)
     axs[0].plot(grid.cell_position, Solver_density, "+")
     axs[1].plot(grid.cell_position, Velocity)
@@ -29,3 +29,4 @@ def plot(Riemann, Solver_solution, grid, t):
     axs[2].set(ylabel = "Pressure")
 
     plt.xlabel("Location x")
+    plt.xlim(-50,50)
