@@ -12,6 +12,7 @@ def Flux_Splitting_Computation(W, lambda1, lambda2, lambda3):
 
 
 class Flux_Steger_Warming:
+    """Steger Warming flux implementation"""
 
     def __init__(self, W_1, W_2):
         """Flux Constructor"""

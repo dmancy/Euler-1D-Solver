@@ -57,15 +57,3 @@ def Solver(U_init, grid, Courant_Number, t0, t_final):
 
        
     return U
-
-
-
-
-
-
-
-
-
-
-
-    

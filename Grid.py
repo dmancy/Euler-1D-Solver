@@ -2,7 +2,6 @@ import numpy as np
 
 class Grid:
     """Define a grid from the position of the faces"""
-
     def __init__(self, faces):
 
         self.faces = faces

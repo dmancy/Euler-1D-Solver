@@ -1,6 +1,7 @@
 from Flux import Flux
 from State import State
 
+#Richtmeyer computation of the predictor
 def Predictor(W_L, W_R, delta_t, delta_x):
     F_L = Flux(W_L)
     F_R = Flux(W_R)

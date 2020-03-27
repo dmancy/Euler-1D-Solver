@@ -41,14 +41,12 @@ t_final = 25
 
 #Exact solution
 Riemann_problem = Riemann(1., 0., 2., 1., 0., 1., 1.4)
-#Riemann_problem.plot_time(grid.cell_position, 0,  t_final)
 
-Courant_number = 1.
+Courant_number = 0.7
 
-Euler = Euler(U_initial, grid, Courant_number, t0, t_final)
+solution = Euler(U_initial, grid, Courant_number, t0, t_final, "Steger_Warming")
 
-plot(Riemann_problem, Euler, grid, t_final, Courant_number)
+plot(Riemann_problem, solution, grid, t_final, Courant_number)
 
+#Plot Figures
 plt.show()
-
-#plt.savefig("Godunov.pdf")

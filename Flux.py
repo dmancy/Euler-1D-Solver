@@ -1,6 +1,6 @@
 
+#Compute the Flux for a given state (rho, velocity, pressure)
 class Flux:
-
     def __init__(self, W_state):
         """Flux Constructor"""
         self.f1 = W_state.rho * W_state.velocity

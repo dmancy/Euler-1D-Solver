@@ -130,3 +130,6 @@ dmypy.json
 
 #Other files
 tags
+
+#pdf
+*.pdf
